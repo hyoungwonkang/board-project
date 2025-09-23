@@ -1,16 +1,6 @@
-// node.js 관련 모든 코드
-
-import express from 'express';
-import cors from 'cors';
 import mysql from 'mysql2';
 
-// 웹 서버 실행, 라우팅 생성, 미들웨어 등록 가능
-const app = express();
-
-app.use(cors());
-app.use(express.json()); // json을 파싱해주는 메서드. req를 사용 할 수 있게함
-
-const PORT = 5000;
+const PORT = 9000;
 
 // 웹 서버 실행
 app.listen(PORT, () => {
@@ -47,7 +37,7 @@ app.get('/', (req,res) => { // 핸들러 메서드
 
 
 // 게시글 목록 조회
-app.get('/api/articles', (req,res) => {
+app.get('/api/v1/articles', (req,res) => {
     console.log('게시글 목록 조회 요청');
 
     const sql = `
@@ -115,7 +105,7 @@ app.delete('/api/articles/:id', (req,res) => {
 
 
 // 게시글 등록
-app.post('/api/articles', (req,res) => {
+app.post('/api/v1/articles', (req,res) => {
     const title = req.body.title;
     const writer = req.body.writer;
     const contents = req.body.contents;
