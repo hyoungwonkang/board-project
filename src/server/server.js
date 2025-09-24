@@ -37,28 +37,28 @@ app.get('/', (req,res) => { // 핸들러 메서드
 
 
 // 게시글 목록 조회
-app.get('/api/v1/articles', (req,res) => {
-    console.log('게시글 목록 조회 요청');
+// app.get('/api/v1/articles', (req,res) => {
+//     console.log('게시글 목록 조회 요청');
 
-    const sql = `
-        SELECT id, title, writer, DATE_FORMAT(reg_date, '%Y-%m-%d %H:%i') as reg_date
-        FROM article
-        ORDER BY id DESC`;
+//     const sql = `
+//         SELECT id, title, writer, DATE_FORMAT(reg_date, '%Y-%m-%d %H:%i') as reg_date
+//         FROM article
+//         ORDER BY id DESC`;
 
-    db.query(sql, (err, data) => {
-        if (!err) {
-            console.log('data: ', data);
-            res.json(data);
-        } else {
-            console.log('error: ', err);
-            res.status(500).json({error: 'DB query error'});
-        };
-    });
-});
+//     db.query(sql, (err, data) => {
+//         if (!err) {
+//             console.log('data: ', data);
+//             res.json(data);
+//         } else {
+//             console.log('error: ', err);
+//             res.status(500).json({error: 'DB query error'});
+//         };
+//     });
+// });
 
 
 // 게시글 상세 조회
-app.get('/api/articles/:id', (req,res) => {
+app.get('/api/v1/articles/:id', (req,res) => {
     const id = req.params.id; // req.params는 url 경로에 포함된 동적인 매개변수를 가져오는 데 사용
     console.log('게시글 상세 조회');
 
@@ -80,7 +80,7 @@ app.get('/api/articles/:id', (req,res) => {
 
 
 // 게시글 삭제
-app.delete('/api/articles/:id', (req,res) => {
+app.delete('/api/v1/articles/:id', (req,res) => {
     const id = req.params.id;
     console.log('id:', id);
     
@@ -128,7 +128,7 @@ app.post('/api/v1/articles', (req,res) => {
 
 
 // 게시글 수정
-app.put('/api/articles/:id', (req,res) => {
+app.put('/api/v1/articles/:id', (req,res) => {
     const id = req.params.id;
     const title = req.body.title;
     const contents = req.body.contents;
@@ -149,4 +149,38 @@ app.put('/api/articles/:id', (req,res) => {
             res.status(500).json({err: 'DB query error'});
         };
     })
-})
+});
+
+
+// 게시글 검색
+// 검색어가 없으면 전체 게시글 조회
+app.get('/api/v1/articles', (req,res) => {
+    const keyfield = req.query.keyfield;
+    const keyword = req.query.keyword;
+
+    let sql = `
+        SELECT title, writer, contents
+        FROM article
+    `;
+
+    if (keyfield && keyword) {
+        sql += `
+            WHERE ${keyfield} LIKE ?
+        `;
+    }
+
+    sql += `
+        ORDER BY id DESC
+    `;
+
+    db.query(sql, [`%${keyword}%`], (err, data) => {
+        if (!err) {
+            console.log('data: ', data);
+            res.json(data);
+        } else {
+            console.log('error: ', err);
+            res.status(500).json({error: 'DB query error'});
+        };
+    });
+
+});

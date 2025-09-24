@@ -5,13 +5,13 @@ const prefix = `${API_SERVER_HOST}/api/v1`
 
 
 // 게시글 목록 조회 
-export const fetchArticles = async () => {
-   const res = await axios.get(`${prefix}/articles`); // axios는 비동기 처리하는 라이브러리. await를 사용하여 응답을 기다림
+// export const fetchArticles = async () => {
+//    const res = await axios.get(`${prefix}/articles`); // axios는 비동기 처리하는 라이브러리. await를 사용하여 응답을 기다림
 
-   console.log('res.data: ', res.data); // axios로 Array객체 반환
+//    console.log('res.data: ', res.data); // axios로 Array객체 반환
    
-   return res.data; // promise 객체 반환
-}
+//    return res.data; // promise 객체 반환
+// }
 
 
 // 게시글 상세 조회
@@ -20,7 +20,7 @@ export const fetchArticle = async (id) => {
 
     console.log('res.data: ', res.data);
 
-    return res.data[0];
+    return res.data;
 }
 
 
@@ -49,6 +49,17 @@ export const putArticle = async (article) => {
     console.log('article:', article);
     
     const res = await axios.put(`${prefix}/articles/${article.id}`, article);
+
+    return res.data;
+}
+
+// 게시글 검색
+export const fetchArticlesBySearch = async (keyfield = "", keyword = "") => {
+    const res = await axios.get(`${prefix}/articles`, {
+        params: { keyfield, keyword }
+    });
+
+    console.log('res.data: ', res.data); // axios로 Array객체 반환
 
     return res.data;
 }
