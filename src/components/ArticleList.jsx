@@ -7,7 +7,7 @@ function ArticleList () {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // Fetch articles whenever searchParams change
+    // 컴포넌트가 처음 렌더링될 때와 searchParams가 변경될 때마다 실행
     useEffect(() => {
         const keyfield = searchParams.get("keyfield") || "title";
         const keyword = searchParams.get("keyword") || "";
@@ -20,7 +20,7 @@ function ArticleList () {
             });
     }, [searchParams]);
 
-    // Handle search button click
+    // 검색 기능
     const handleSearch = () => {
         const keyfield = document.querySelector('select').value;
         const keyword = document.querySelector('input').value;
