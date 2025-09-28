@@ -6,7 +6,7 @@ const initialArticle = {
     title: '',
     writer: '',
     contents: '',
-    files: [[]]
+    files: []
 };
 
 function ArticleWrite () {
