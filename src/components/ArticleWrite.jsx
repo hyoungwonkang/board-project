@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 const initialArticle = {
     title: '',
     writer: '',
-    contents: ''
+    contents: '',
+    files: [[]]
 };
 
 function ArticleWrite () {
@@ -16,6 +17,13 @@ function ArticleWrite () {
         setArticle({
             ...article,
             [e.target.name]: e.target.value
+        });
+    }
+    
+    const handleFileChange = (e) => {
+        setArticle({
+            ...article,
+            files: Array.from(e.target.files) 
         });
     }
 
@@ -56,6 +64,15 @@ function ArticleWrite () {
                         value={article.contents}                  
                         onChange={handleChange}
                     ></textarea>
+                </div>
+                <div className="form-group-horizontal">
+                    <label htmlFor="files">파일 첨부</label>
+                    <input
+                        type="file"
+                        name="files"
+                        multiple
+                        onChange={handleFileChange}
+                    />
                 </div>
                 <div className="form-actions">
                     <button type="button" onClick={() => handleSubmit(article, navigate)}>Submit</button>

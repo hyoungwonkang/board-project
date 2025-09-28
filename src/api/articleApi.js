@@ -33,11 +33,30 @@ export const deleteArticle = async (id) => {
 }
 
 
-// 게시글 등록
+// 게시글 등록 (파일 첨부 지원)
 export const postArticle = async (article) => {
     console.log('article:', article);
-    
-    const res = await axios.post(`${prefix}/articles`, article);
+
+    const formData = new FormData();
+    formData.append('article', new Blob([JSON.stringify({
+        title: article.title,
+        writer: article.writer,
+        contents: article.contents
+    })], { type: 'application/json' }));
+
+    if (article.files && article.files.length > 0) {
+        for (let i = 0; i < article.files.length; i++) {
+            formData.append('files', article.files[i]);
+        }
+    }
+
+    // 파일이 없을때 빈 Blob을 추가해도 안되어 백엔드 컨트롤러에서 files와 연관된 @RequestPart를 required=false로 설정
+
+    const res = await axios.post(`${prefix}/articles`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     console.log(`res.data: `, res.data);
 
     return res.data;
@@ -59,7 +78,7 @@ export const fetchArticlesBySearch = async (keyfield = "", keyword = "") => {
         params: { keyfield, keyword }
     });
 
-    console.log('res.data: ', res.data); // axios로 Array객체 반환
+    console.log('res.data: ', res.data);
 
     return res.data;
 }

@@ -2,6 +2,8 @@ import { deleteArticle, postArticle } from "../api/articleApi";
 
 // 게시글 등록
 export const handleSubmit = (article, navigate) => {
+    console.log('article:', article);
+    
     postArticle(article)
         .then((data) => {
             console.log("게시물 등록 성공")

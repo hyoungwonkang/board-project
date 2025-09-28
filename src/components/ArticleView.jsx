@@ -44,6 +44,16 @@ function ArticleView() {
                     <p>{article.writer}</p>
                     <p>{article.reg_date}</p>
                     <p>{article.contents}</p>
+                    <p>첨부파일:</p>
+                    { !article.files || article.files.length === 0 ? <p>첨부파일이 없습니다.</p> : (
+                        <ul>
+                            {article.files.map((file) => (
+                                <li key={file.id}>
+                                    <p>{file.fileName}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
                 <div>
                     <button onClick={()=>navigate(`/modify/${article.id}`, {state: {...article}})}>게시글 수정</button>
