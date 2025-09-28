@@ -21,10 +21,10 @@ function ArticleWrite () {
     }
     
     const handleFileChange = (e) => {
-        setArticle({
-            ...article,
-            files: Array.from(e.target.files) 
-        });
+        setArticle(prev => ({
+            ...prev,
+            files: [...prev.files, ...Array.from(e.target.files)]
+        }));
     }
 
     const handleReset = () => {
@@ -74,6 +74,17 @@ function ArticleWrite () {
                         onChange={handleFileChange}
                     />
                 </div>
+                {/* 파일 목록 표시 */}
+                {article.files.length > 0 && (
+                    <div className="form-group-horizontal">
+                        <label>첨부된 파일:</label>
+                        <ul>
+                            {article.files.map((file, idx) => (
+                                <li key={idx}>{file.name}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
                 <div className="form-actions">
                     <button type="button" onClick={() => handleSubmit(article, navigate)}>Submit</button>
                     <button type="button" onClick={handleReset}>Reset</button>
