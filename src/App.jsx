@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import { Link, Route, Routes, useParams } from 'react-router-dom'
 import ArticleList from './components/ArticleList'

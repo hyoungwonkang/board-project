@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import { handleSubmit } from '../common/article';
 import { useNavigate } from 'react-router-dom';
+import { postArticle } from "../api/articleApi";
 
 const initialArticle = {
     title: '',
@@ -12,6 +13,21 @@ const initialArticle = {
 function ArticleWrite () {
     const navigate = useNavigate();
     const [article, setArticle] = useState({...initialArticle});
+    
+    const handleSubmit = (article, navigate) => {
+        console.log('article:', article);
+        
+        postArticle(article)
+            .then((data) => {
+                console.log("게시물 등록 성공")
+                console.log('data:', data);
+                navigate('/list', {replace: true});
+            })
+            .catch((err) => {
+                console.log("게시물 등록 실패");
+                console.log('err:', err);
+            })
+    }
     
     const handleChange = (e) => {
         setArticle({

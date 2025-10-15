@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchArticle } from "../api/articleApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { handleRemove } from "../common/article";
+import { deleteArticle } from "../api/articleApi";
 
 function ArticleView() {
     const navigate = useNavigate();
@@ -26,6 +27,18 @@ function ArticleView() {
                 setLoading(false);
             })
     },[id])
+    
+    const handleRemove = (id, navigate) => {
+        deleteArticle(id)
+            .then((data) => {
+                console.log('data:', data);
+                navigate('/list', {replace: true});
+            })
+            .catch((err) => {
+                console.log('err:', err);
+                setError('게시글 삭제 실패')
+            })
+    }
 
     if (loading) {
         return <h2>Loading...</h2>
