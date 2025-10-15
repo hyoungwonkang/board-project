@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchArticle } from "../api/articleApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { handleRemove } from "../common/article";
 import { deleteArticle } from "../api/articleApi";
 
 function ArticleView() {

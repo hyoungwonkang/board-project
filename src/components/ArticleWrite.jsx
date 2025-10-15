@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import { handleSubmit } from '../common/article';
 import { useNavigate } from 'react-router-dom';
 import { postArticle } from "../api/articleApi";
 

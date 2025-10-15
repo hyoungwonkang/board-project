@@ -16,17 +16,12 @@ const initialState = {
 };
 
 function ArticleList () {
-
     const [serverData, setServerData] = useState({...initialState});
-    
-    
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const page = parseInt(searchParams.get("page")) || 1;
     const size = parseInt(searchParams.get("size")) || 10;
-
-    console.log("page, size", page, size);
     
     // 컴포넌트가 처음 렌더링될 때와 searchParams가 변경될 때마다 실행
     useEffect(() => {
@@ -47,7 +42,6 @@ function ArticleList () {
         //         console.log('error:', err);
         //     });
     }, [page, size]);
-    console.log("serverData",serverData);
 
     // 검색 기능
     // const handleSearch = () => {
