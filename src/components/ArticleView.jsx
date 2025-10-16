@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { fetchArticle } from "../api/articleApi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { deleteArticle } from "../api/articleApi";
+import { useCustomMove } from "../hooks/useCustomMove";
 
 function ArticleView() {
-    const navigate = useNavigate();
     const id = useParams().id;
+    const { moveToList, moveToModify, page, size } = useCustomMove();
+
     const [article, setArticle] = useState({});
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -27,11 +29,11 @@ function ArticleView() {
             })
     },[id])
     
-    const handleRemove = (id, navigate) => {
+    const handleRemove = (id) => {
         deleteArticle(id)
             .then((data) => {
                 console.log('data:', data);
-                navigate('/list', {replace: true});
+                moveToList({page, size});
             })
             .catch((err) => {
                 console.log('err:', err);
@@ -68,9 +70,9 @@ function ArticleView() {
                     )}
                 </div>
                 <div>
-                    <button onClick={()=>navigate(`/modify/${article.id}`, {state: {...article}})}>게시글 수정</button>
-                    <button onClick={()=>navigate('/list')}>게시글 조회</button>
-                    <button onClick={()=>handleRemove(id, navigate)}>게시글 삭제</button>
+                    <button onClick={()=>{moveToModify(id, article)}}>게시글 수정</button>
+                    <button onClick={()=>{moveToList({page, size})}}>게시글 조회</button>
+                    <button onClick={()=>handleRemove(id)}>게시글 삭제</button>
                 </div>
                 </>
             )}

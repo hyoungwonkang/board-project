@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchArticles, fetchArticlesBySearch } from "../api/articleApi";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import PageComponent from "./common/PageComponent";
+import { useCustomMove } from "../hooks/useCustomMove";
 
 const initialState = {
     dtoList: [],
@@ -17,11 +18,7 @@ const initialState = {
 
 function ArticleList () {
     const [serverData, setServerData] = useState({...initialState});
-    const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const page = parseInt(searchParams.get("page")) || 1;
-    const size = parseInt(searchParams.get("size")) || 10;
+    const { moveToView, moveToList, page, size } = useCustomMove();
     
     // 컴포넌트가 처음 렌더링될 때와 searchParams가 변경될 때마다 실행
     useEffect(() => {
@@ -59,22 +56,25 @@ function ArticleList () {
             <thead>
                 <tr>
                     <th>id</th>
+                    <th>no</th>
                     <th>title</th>
                     <th>writer</th>
                     <th>reg_date</th>
                 </tr>
             </thead>
             <tbody>
-                {descArticles.map((article) => (
+                {serverData.dtoList.map((article, index) => (
                     <tr key={article.id}>
+                        <td>{(serverData.totalCount - (page - 1)*size) - index}</td>
                         <td>{article.id}</td>
-                        <td style={{textDecoration:'underline', cursor:'pointer'}} onClick={() => navigate(`/view/${article.id}`)}>{article.title}</td>
+                        <td style={{textDecoration:'underline', cursor:'pointer'}} onClick={() => moveToView(article.id)}>{article.title}</td>
                         <td>{article.writer}</td>
                         <td>{article.regDate}</td>
                     </tr>
                 ))}
             </tbody>
         </table>
+        <PageComponent serverData={serverData} movePage={moveToList} />
         {/* <div>
             <select name="keyfield" id="keyfield">
                 <option value="title">제목</option>
