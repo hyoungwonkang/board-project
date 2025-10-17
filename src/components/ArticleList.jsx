@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { fetchArticles, fetchArticlesBySearch } from "../api/articleApi";
+import { fetchArticles } from "../api/articleApi";
 import PageComponent from "./common/PageComponent";
 import { useCustomMove } from "../hooks/useCustomMove";
+import { useSearchParams } from "react-router-dom";
 
 const initialState = {
     dtoList: [],
@@ -17,41 +18,78 @@ const initialState = {
 };
 
 function ArticleList () {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [serverData, setServerData] = useState({...initialState});
+    const [keyfield, setKeyfield] = useState('title');
+    const [keyword, setKeyword] = useState('');
+
+    const [loading, setLoading] = useState(false);
     const { moveToView, moveToList, page, size } = useCustomMove();
     
     // 컴포넌트가 처음 렌더링될 때와 searchParams가 변경될 때마다 실행
     useEffect(() => {
-        fetchArticles(page, size)
+
+        const keyfieldParam = searchParams.get('keyfield') || 'title';
+        const keywordParam = searchParams.get('keyword') || '';
+
+        if (keyfieldParam && keywordParam) {
+        fetchArticles({page, size, keyfield: keyfieldParam, keyword: keywordParam})
             .then((data) => {
                 setServerData(data);
             })
             .catch((err) => {
                 console.log('error:', err);
             });
-        // const keyfield = searchParams.get("keyfield") || "title";
-        // const keyword = searchParams.get("keyword") || "";
-        // fetchArticlesBySearch(keyfield, keyword)
-        //     .then((data) => {
-        //         setServerData(data);
-        //     })
-        //     .catch((err) => {
-        //         console.log('error:', err);
-        //     });
-    }, [page, size]);
-
-    // 검색 기능
-    // const handleSearch = () => {
-    //     const keyfield = document.querySelector('select').value;
-    //     const keyword = document.querySelector('input').value;
-    //     setSearchParams({ keyfield, keyword });
-    // };
+        } else {
+        fetchArticles({page, size, keyfield: keyfield, keyword: keyword})
+            .then((data) => {
+                setServerData(data);
+            })
+            .catch((err) => {
+                console.log('error:', err);
+            });
+        }
+    }, [page]);
 
     // const descArticles = [...serverData].sort((a, b) => a.id - b.id);
     const descArticles = [...serverData.dtoList].sort((a, b) => a.id - b.id);
 
+    const handleChangeKeyfield = (e) => { setKeyfield(e.target.value); }
+    const handleChangeKeyword = (e) => { setKeyword(e.target.value); }
+    const handleClickSearch = () => {
+        if(!keyfield || !keyword) {
+            alert('검색어를 입력하세요');
+            return;
+        }
+
+        setLoading(true);
+
+        fetchArticles({page: 1, size, keyfield, keyword})
+            .then((data) => {
+                setServerData(data);
+                moveToList({page: 1, size, keyfield, keyword});
+            })
+            .catch((err) => {
+                console.log('error:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
     return (
         <>
+        <h1>게시글 목록</h1>
+        {/* 검색 폼 */}
+        <div>
+            <select onChange={handleChangeKeyfield} name="keyfield" id="keyfield" value={keyfield}>
+                <option value="title">제목</option>
+                <option value="writer">작성자</option>
+                <option value="contents">내용</option>
+            </select>&nbsp;
+            <input type="text" onChange={handleChangeKeyword} value={keyword} placeholder="검색어 입력" />
+            <button type="button" onClick={handleClickSearch}>검색</button>
+        </div>
         <table border="1" cellPadding="8" cellSpacing="0" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
                 <tr>
@@ -75,15 +113,6 @@ function ArticleList () {
             </tbody>
         </table>
         <PageComponent serverData={serverData} movePage={moveToList} />
-        {/* <div>
-            <select name="keyfield" id="keyfield">
-                <option value="title">제목</option>
-                <option value="writer">작성자</option>
-                <option value="contents">내용</option>
-            </select>
-            <input type="text" />
-            <button onClick={handleSearch}>검색</button>
-        </div> */}
         </>
     )
 }

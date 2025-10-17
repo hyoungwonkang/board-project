@@ -1,6 +1,6 @@
 import {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import { postArticle } from "../api/articleApi";
+import { handleSubmit } from '../common/article';
+import { useCustomMove } from '../hooks/useCustomMove';
 
 const initialArticle = {
     title: '',
@@ -10,23 +10,9 @@ const initialArticle = {
 };
 
 function ArticleWrite () {
-    const navigate = useNavigate();
+    const { moveToList, page, size } = useCustomMove();
     const [article, setArticle] = useState({...initialArticle});
     
-    const handleSubmit = (article, navigate) => {
-        console.log('article:', article);
-        
-        postArticle(article)
-            .then((data) => {
-                console.log("게시물 등록 성공")
-                console.log('data:', data);
-                navigate('/list', {replace: true});
-            })
-            .catch((err) => {
-                console.log("게시물 등록 실패");
-                console.log('err:', err);
-            })
-    }
     
     const handleChange = (e) => {
         setArticle({
@@ -101,7 +87,7 @@ function ArticleWrite () {
                     </div>
                 )}
                 <div className="form-actions">
-                    <button type="button" onClick={() => handleSubmit(article, navigate)}>Submit</button>
+                    <button type="button" onClick={() => handleSubmit(article, moveToList, page, size)}>Submit</button>
                     <button type="button" onClick={handleReset}>Reset</button>
                 </div>    
             </div>    

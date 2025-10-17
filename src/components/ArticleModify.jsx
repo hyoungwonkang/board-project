@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { handleSubmit } from "../common/article";
+import { useLocation, useParams } from "react-router-dom";
 import { fetchArticle } from "../api/articleApi";
+import { useCustomMove } from "../hooks/useCustomMove";
+import { handleModify } from "../common/article";
 
 const initialArticle = {
     title: '',
@@ -11,8 +12,8 @@ const initialArticle = {
 
 function ArticleModify() {
     const location = useLocation();
-    const navigate = useNavigate();
     const { id } = useParams();
+    const { moveToList, page, size } = useCustomMove();
     const [article, setArticle] = useState(location.state || initialArticle);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -92,7 +93,7 @@ function ArticleModify() {
                     ></textarea>
                 </div>
                 <div className="form-actions">
-                    <button type="button" onClick={() => handleSubmit(article, navigate)}>Submit</button>
+                    <button type="button" onClick={() => handleModify(article, moveToList, page, size)}>Submit</button>
                     <button type="button" onClick={handleReset}>Reset</button>
                 </div>    
             </div> 

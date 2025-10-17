@@ -8,6 +8,8 @@ export function useCustomMove() {
 
     const page = parseInt(searchParams.get("page")) || 1;
     const size = parseInt(searchParams.get("size")) || 10;
+    const keyfield = searchParams.get("keyfield");
+    const keyword = searchParams.get("keyword");
 
     const queryDefault = createSearchParams({ page, size });
 
@@ -16,18 +18,41 @@ export function useCustomMove() {
         if (pageParams) {
             const newPage = parseInt(pageParams.page) || 1;
             const newSize = parseInt(pageParams.size) || 10;
-            queryStr = createSearchParams({ page: newPage, size: newSize }).toString();
+            const newKeyfield = pageParams.keyfield;
+            const newKeyword = pageParams.keyword;
+            
+            // 검색 파라미터가 있으면 포함
+            if (newKeyfield && newKeyword) {
+                queryStr = createSearchParams({ 
+                    page: newPage, 
+                    size: newSize, 
+                    keyfield: newKeyfield, 
+                    keyword: newKeyword 
+                }).toString();
+            } else {
+                queryStr = createSearchParams({ page: newPage, size: newSize }).toString();
+            }
             navigate(`/list?${queryStr}`);
         } else {
-            queryStr = queryDefault.toString();
+            // 현재 검색 파라미터가 있으면 유지
+            if (keyfield && keyword) {
+                queryStr = createSearchParams({ page, size, keyfield, keyword }).toString();
+            } else {
+                queryStr = queryDefault.toString();
+            }
             navigate(`/list?${queryStr}`);
         }
     }
     
     const moveToModify = (id, articleData = null) => {
+        let searchQuery = queryDefault.toString();
+        if (keyfield && keyword) {
+            searchQuery = createSearchParams({ page, size, keyfield, keyword }).toString();
+        }
+        
         const navigateOptions = {
             pathname: `/modify/${id}`,
-            search: `?${queryDefault.toString()}`
+            search: `?${searchQuery}`
         };
         
         if (articleData) {
@@ -38,8 +63,12 @@ export function useCustomMove() {
     }
 
     const moveToView = (id) => {
-        navigate(`/view/${id}?${queryDefault.toString()}`);
+        let searchQuery = queryDefault.toString();
+        if (keyfield && keyword) {
+            searchQuery = createSearchParams({ page, size, keyfield, keyword }).toString();
+        }
+        navigate(`/view/${id}?${searchQuery}`);
     }
 
-    return { moveToList, moveToModify, moveToView, page, size };
+    return { moveToList, moveToModify, moveToView, page, size, keyfield, keyword };
 }
