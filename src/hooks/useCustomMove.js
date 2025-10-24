@@ -21,8 +21,8 @@ export function useCustomMove() {
             const newKeyfield = pageParams.keyfield;
             const newKeyword = pageParams.keyword;
             
-            // 검색 파라미터가 있으면 포함
-            if (newKeyfield && newKeyword) {
+            // 검색 파라미터가 falsy하지 않으면 포함
+            if (newKeyfield !== undefined && newKeyword !== undefined) {
                 queryStr = createSearchParams({ 
                     page: newPage, 
                     size: newSize, 

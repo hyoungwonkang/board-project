@@ -32,24 +32,27 @@ function ArticleList () {
         const keyfieldParam = searchParams.get('keyfield') || 'title';
         const keywordParam = searchParams.get('keyword') || '';
 
-        if (keyfieldParam && keywordParam) {
-        fetchArticles({page, size, keyfield: keyfieldParam, keyword: keywordParam})
-            .then((data) => {
-                setServerData(data);
-            })
-            .catch((err) => {
-                console.log('error:', err);
-            });
+        if (keyfieldParam !== null) setKeyfield(keyfieldParam);
+        if (keywordParam !== null) setKeyword(keywordParam);
+
+        if (keyfieldParam && keywordParam && keyfieldParam !== '' && keywordParam !== '') {
+            fetchArticles({page, size, keyfield: keyfieldParam, keyword: keywordParam})
+                .then((data) => {
+                    setServerData(data);
+                })
+                .catch((err) => {
+                    console.log('error:', err);
+                });
         } else {
-        fetchArticles({page, size, keyfield: keyfield, keyword: keyword})
-            .then((data) => {
-                setServerData(data);
-            })
-            .catch((err) => {
-                console.log('error:', err);
-            });
+            fetchArticles({page, size, keyfield: '', keyword: ''})
+                .then((data) => {
+                    setServerData(data);
+                })
+                .catch((err) => {
+                    console.log('error:', err);
+                });
         }
-    }, [page]);
+    }, [page, size,, searchParams]);
 
     // const descArticles = [...serverData].sort((a, b) => a.id - b.id);
     const descArticles = [...serverData.dtoList].sort((a, b) => a.id - b.id);
